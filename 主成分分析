@@ -1,0 +1,61 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[UTF8]{ctex}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage[svgnames]{xcolor}
+\usepackage{listings}
+
+\lstset{language=R,
+    basicstyle=\small\ttfamily,
+    stringstyle=\color{DarkGreen},
+    otherkeywords={0,1,2,3,4,5,6,7,8,9},
+    morekeywords={TRUE,FALSE},
+    deletekeywords={data,frame,length,as,character},
+    keywordstyle=\color{blue},
+    commentstyle=\color{DarkGreen},
+}
+\usepackage{accents}
+\newcommand{\ut}[1]{\underaccent{\tilde}{#1}}
+\newcommand{\ve}[1]{\ut{#1}}
+\geometry{paperwidth=21.6cm,paperheight=27.9cm,left=1cm,right=1cm,top=2cm,bottom=2cm}
+\setlength{\lineskip}{5mm}
+\renewcommand{\baselinestretch}{2.1} \normalsize
+\begin{document}
+\section*{统计学习讲义}
+\noindent黄炎锟
+\\2018年3月25日
+\subsection*{主成分分析}
+\noindent设现有$p$维变量$\vec{X}$来自期望为$\vec{\mu}$, 协方差矩阵为$\mathbf{\Sigma}$的多元分布. 对$\vec{X}$取$n$个i.i.d.样本, 其中$n>p$, 得到数据集$\mathbf{X}_{n\times p}$.
+\\不失一般性地, 可以定义$\vec{\mu}=\vec{0}$. 否则可以对$\mathbf{X}$进行中心化, 使得$\mathbf{X}_{n\times p}$的每一列有平均值0.
+\\此时, 对协方差矩阵$\mathbf{\Sigma}$有极大似然估计$\dfrac{1}{n}\mathbf{X}^{\mathsf{T}}\mathbf{X}$.
+\\用Lagrange乘子法, $f(\vec{\phi})=\vec{\phi}^\intercal\mathbf{X}^{\mathsf{T}}\mathbf{X}\vec{\phi}-\lambda(\vec{\phi}^\intercal\vec{\phi}-1)$.
+\\$\nabla f(\vec{\phi})=\vec{0}$, 由此得到$2(\mathbf{X}^{\mathsf{T}}\mathbf{X}-\lambda\mathbf{I}_{p})\vec{\phi}=\vec{0}$. 左右同除以2, 移项得$\mathbf{X} ^{\mathsf{T}}\mathbf{X}\vec{\phi}=\lambda\mathbf{I}_{p}\vec{\phi}=\lambda\vec{\phi}$, 即求$\mathbf{X} ^{\mathsf{T}}\mathbf{X}$的特征值$\lambda$.
+\\考虑对$\mathbf{X}$的奇异值分解. $\mathbf{X}=\mathbf{UDV}^{\mathsf{T}}$, $\mathbf{X}_{n\times p}$, $\mathbf{U}_{n\times p}$, $\mathbf{D}_{p\times p}=\mathrm{diag}(d_{1},\cdots d_{p})=\mathbf{D}^{\mathsf{T}}$, $\mathbf{U}$和$\mathbf{V}$是正交矩阵.
+\\$\mathbf{X}^{\mathsf{T}}\mathbf{X}$是对称方阵, 由奇异值分解得$\mathbf{X}^{\mathsf{T}}\mathbf{X}=(\mathbf{UDV}^{\mathsf{T}})^{\mathsf{T}}\mathbf{UDV}^{\mathsf{T}}=\mathbf{VD}^{\mathsf{T}}\mathbf{U}^{\mathsf{T}}\mathbf{UD}^{\mathsf{T}}\mathbf{V}^{\mathsf{T}}= \mathbf{VD}^{\mathsf{T}}\mathbf{DV}^{\mathsf{T}}=\mathbf{VD}^{2}\mathbf{V}^{\mathsf{T}}$.
+\\$\mathbf{X}$中的行是$\mathbb{R}^{p}$中数据点的坐标, 用标准正交基$\{\vec{e}_{1},\cdots\vec{e}_{p}\}$表示. $\vec{e}_{1}=(1,0,\cdots0)^{\mathsf{T}},\cdots\vec{e}_{p}=(0,\cdots0,1)^{\mathsf{T}}$. $(\vec{e}_{1},\cdots\vec{e}_{p})=\mathbf{I}_{p}$.
+\\$\mathbf{UD}$中的行是$\mathbb{R}^{p}$中数据点的坐标, 用正规正交基$\{\vec{m}_{1},\cdots\vec{m}_{p}\}$表示. $\vec{m}_{i}=(m_{i}^{(1)},\cdots m_{i}^{(p)})^{\mathsf{T}}$, $i=1,\cdots p$, 上标$(j)$表示第$j$分量.
+\\由基刻画坐标的方式知$\mathbf{X}=\mathbf{UD}\begin{pmatrix}\vec{m}_{1}^{\mathsf{T}}\\ \vdots \\ \vec{m}_{p}^{\mathsf{T}}\end{pmatrix}=\mathbf{UDV}^{\mathsf{T}}$, 因此有$\mathbf{V}^{\mathsf{T}}=\begin{pmatrix}\vec{m}_{1}^{\mathsf{T}}\\ \vdots \\ \vec{m}_{p}^{\mathsf{T}}\end{pmatrix}$, 即$\mathbf{V}=(\vec{m}_{1},\cdots\vec{m}_{p})$.
+\\$\mathbf{UD}$的第$i$列是样本在正规正交基下$\vec{m}_{i}$在每个点的新坐标的系数, 即$\mathbf{UD}$的第$i$列是$\vec{m}_{i}=\vec{\phi}_{i}$的得分.
+\\由线性代数坐标与基的变换知，$\mathbf{X}^{\mathsf{T}}$中的每一列表示$\mathbb{R}^{p}$中点的坐标, 同理$\mathbf{UD}^{\mathsf{T}}$. 
+\\由$\mathbf{X}=(\mathbf{UD})\mathbf{V}^{\mathsf{T}}$知$\mathbf{X}^{\mathsf{T}}= (\mathbf{V}^{\mathsf{T}})^{\mathsf{T}}(\mathbf{UD})^{\mathsf{T}}=\mathbf{V}(\mathbf{UD})^{\mathsf{T}}$.
+\\由坐标变换公式知$\mathbf{V}$是基$\{\vec{e}_{1},\cdots\vec{e}_{p}\}$到$\{\vec{m}_{1},\cdots\vec{m}_{p}\}$的过渡矩阵, 因此有$(\vec{m}_{1},\cdots\vec{m}_{p})=(\vec{e}_{1},\cdots\vec{e}_{p})\mathbf{V}$.
+\\此时有恒等式$\mathbf{V}=(\vec{m}_{1},\cdots\vec{m}_{p})=(\vec{e}_{1},\cdots\vec{e}_{p})\mathbf{V}=\mathbf{I}_{p}\mathbf{V}=\mathbf{V}$.
+\\$\mathbf{V}^{-1}=\mathbf{V}^{\mathsf{T}}$是基$\{\vec{m}_{1},\cdots\vec{m}_{p}\}$到$\{\vec{e}_{1},\cdots\vec{e}_{p}\}$的过渡矩阵. 此时有$(\mathbf{UD})^{\mathsf{T}}=\mathbf{V}^{\mathsf{T}}\mathbf{X}^{\mathsf{T}}$对应坐标轴的旋转.
+\\回到$\mathbf{X}=\mathbf{UDV}^{\mathsf{T}}=\begin{pmatrix}\vec{u}_{1} & \cdots & \vec{u}_{p}\end{pmatrix}\begin{pmatrix}d_{1} & & \\ & \ddots & \\ & & d_{p}\end{pmatrix}\begin{pmatrix}\vec{m}_{1}^{\mathsf{T}} \\ \vdots \\ \vec{m}_{p}^{\mathsf{T}}\end{pmatrix}=\sum\limits_{k=1}^{p}d_{k}\vec{u}_{k}\vec{m}_{k}^{\mathsf{T}}$, 其中$\vec{u}_{k}$是$n\times1$向量, $\vec{m}_{k}^{\mathsf{T}}$是$1\times p$向量.
+\\作分解, 上式$=\begin{pmatrix}\vec{u}_{1} & \cdots & \vec{u}_{p}\end{pmatrix}\begin{pmatrix}d_{1}^{\alpha} & & \\ & \ddots & \\ & & d_{p}^{\alpha}\end{pmatrix}\begin{pmatrix}d_{1}^{1-\alpha} & & \\ & \ddots & \\ & & d_{p}^{1-\alpha}\end{pmatrix}\begin{pmatrix}\vec{m}_{1}^{\mathsf{T}} \\ \vdots \\ \vec{m}_{p}^{\mathsf{T}}\end{pmatrix}=\begin{pmatrix}d_{1}^{\alpha}\vec{u}_{1} & \cdots & d_{1}^{\alpha}\vec{u}_{p}\end{pmatrix}\begin{pmatrix}d_{1}^{1-\alpha}\vec{m}_{1}^{\mathsf{T}} \\ \vdots \\ d_{1}^{1-\alpha}\vec{m}_{p}^{\mathsf{T}}\end{pmatrix}$.
+\\接下来在R中讨论如何运用主成分分析. 用$\mathrm{X}$表示数据集$\mathbf{X}_{n\times p}$, 则有:
+\begin{lstlisting}
+scale(X)
+pca <- prinpcom(X)
+summary(pca)
+screeplot(pca)
+biplot(pca)
+\end{lstlisting}
+ss
+\end{document}
